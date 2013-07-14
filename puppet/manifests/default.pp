@@ -6,7 +6,7 @@ Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
     path    => '/usr/bin/',
     timeout => 60,
     tries   => 3,
-  }  
+  }
 
 
 #### set nodejs ppa
@@ -15,11 +15,11 @@ class prepare {
   apt::ppa { 'ppa:chris-lea/node.js': }
 }
 include prepare
-  
+
 
 class nodePackages {
     package {'nodejs':
-        ensure => present, 
+        ensure => present,
         require => Class['prepare'],
     }
 
@@ -27,12 +27,13 @@ class nodePackages {
         ensure   => present,
         provider => 'npm',
         require  => Package['nodejs'],
-    }  
+    }
 }
 
 class php ($version = 'latest') {
 
-    package { [ "php5", "php5-cli", "php5-fpm", "php5-mysql", "php5-gd", "php-apc", "php5-xdebug", "php5-intl"]:
+    #Add PHP modules here
+    package { [ "php5", "php5-cli", "php5-fpm", "php5-mysql", "php5-gd", "php-apc", "php5-xdebug", "php5-intl", "php5-mcrypt"]:
         ensure => $version,
         before => File['/etc/php5/cli/php.ini'],
         require => Exec['apt-get-update'],
@@ -43,7 +44,7 @@ class php ($version = 'latest') {
         owner  => 'root',
         require => Package['php5-fpm', 'php5-cli'],
         content => template("config/php.ini"),
-    } 
+    }
 
     file {'/etc/php5/conf.d/xdebug.ini':
         ensure => present,
@@ -61,14 +62,14 @@ class php ($version = 'latest') {
         ensure => running,
         enable => true,
         require => Package['php5', 'php5-fpm'],
-        subscribe => File['/etc/php5/fpm/php.ini', '/etc/php5/fpm/pool.d/www.conf'],     
+        subscribe => File['/etc/php5/fpm/php.ini', '/etc/php5/fpm/pool.d/www.conf'],
     }
 
     exec { 'install-composer':
         command => 'curl -sS https://getcomposer.org/installer | php && /bin/mv composer.phar /usr/local/bin/composer',
         path    => '/usr/bin',
         require => Package['php5-cli', 'curl'],
-    }     
+    }
 }
 
 #### install nginx
@@ -105,7 +106,7 @@ class nginx ($version = 'latest') {
 
     # service {'apache2':
     #     ensure  => stopped,
-    #     require => Service['nginx'],  
+    #     require => Service['nginx'],
     # }
 
 }
