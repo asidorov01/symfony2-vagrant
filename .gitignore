@@ -1,2 +1,4 @@
 www/*
 .idea
+.vagrant
+.DS_Store
