@@ -137,7 +137,7 @@ class mysql5 ($version = 'latest') {
 }
 
 class dev ($version = 'latest') {
-    $devPackages = [ "curl", "git", "capistrano", "rubygems", "openjdk-7-jdk", "libaugeas-ruby", "mc", "htop" ]
+    $devPackages = [ "curl", "git", "capistrano", "rubygems", "openjdk-7-jdk", "libaugeas-ruby", "mc", "htop", "imagemagick" ]
 
     package { $devPackages:
         ensure => installed,
