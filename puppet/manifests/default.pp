@@ -33,7 +33,7 @@ class nodePackages {
 class php ($version = 'latest') {
 
     #Add PHP modules here
-    package { [ "php5", "php5-cli", "php5-fpm", "php5-mysql", "php5-gd", "php-apc", "php5-xdebug", "php5-intl", "php5-mcrypt"]:
+    package { [ "php5", "php5-cli", "php5-fpm", "php5-mysql", "php5-curl", "php5-gd", "php-apc", "php5-xdebug", "php5-intl", "php5-mcrypt"]:
         ensure => $version,
         before => File['/etc/php5/cli/php.ini'],
         require => Exec['apt-get-update'],
