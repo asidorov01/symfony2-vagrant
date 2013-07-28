@@ -20,10 +20,11 @@ Vagrant.configure("2") do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  # config.vm.network :private_network, ip: "192.168.33.10"
+  #config.vm.network :private_network, ip: "192.168.33.10"
   config.vm.network :private_network, ip: "192.168.55.10"
 
   config.vm.network :forwarded_port, guest: 80, host: 1337
+  config.vm.network :forwarded_port, guest: 3306, host: 3307
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -42,6 +43,8 @@ Vagrant.configure("2") do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
+
+  # @SEE http://www.virtualbox.org/manual/ch08.html#idp12921600 for more config options
   config.vm.provider :virtualbox do |vb|
     # Don't boot with headless mode
     #vb.gui = true
@@ -50,9 +53,14 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--memory", "2048"]
     vb.customize ["modifyvm", :id, "--cpus", "1"]
     #This is optimized for composer update, feel free to change to up performance if your software using multiple CPUs
-    vb.customize ["modifyvm", :id, "--acpi", "off"]
-    vb.customize ["modifyvm", :id, "--ioapic", "off"]
+    vb.customize ["modifyvm", :id, "--acpi", "on"]
+    vb.customize ["modifyvm", :id, "--ioapic", "on"]
     vb.customize ["modifyvm", :id, "--vram", "16"]
+    #For SSD
+    vb.customize ["storageattach", :id, "--storagectl", "SATA Controller",
+                       '--port', '0', '--nonrotational', 'on']
+
+
   end
   #
   # View the documentation for the provider you're using for more
