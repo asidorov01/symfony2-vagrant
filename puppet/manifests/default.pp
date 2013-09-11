@@ -1,12 +1,24 @@
 Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
 
 
-  exec { 'apt-get-update':
+exec { 'wget_for_elasticsearch':
+    command => 'wget -O /vagrant/elasticsearch-0.90.3.deb https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.3.deb',
+    creates => "/vagrant/elasticsearch-0.90.3.deb",
+    # path => '/usr/bin/',
+}
+
+exec { 'install_elasticsearch':
+    command => 'dpkg -i /vagrant/elasticsearch-0.90.3.deb',
+    creates => "/etc/elasticsearch/elasticsearch.yml",
+    # path => '/usr/bin/',
+}
+
+exec { 'apt-get-update':
     command => 'apt-get update',
     path    => '/usr/bin/',
     timeout => 60,
     tries   => 3,
-  }
+}
 
 
 #### set nodejs ppa
@@ -33,7 +45,7 @@ class nodePackages {
 class php ($version = 'latest') {
 
     #Add PHP modules here
-    package { [ "php5", "php5-cli", "php5-fpm", "php5-mysql", "php5-curl", "php5-gd", "php-apc", "php5-xdebug", "php5-intl", "php5-mcrypt"]:
+    package { [ "php5", "php5-cli", "php5-fpm", "php5-mysql", "php5-curl", "php5-gd", "php-apc", "php5-xdebug", "php5-intl", "php5-mcrypt", "php5-imagick"]:
         ensure => $version,
         before => File['/etc/php5/cli/php.ini'],
         require => Exec['apt-get-update'],
@@ -111,6 +123,23 @@ class nginx ($version = 'latest') {
 
 }
 
+#### install nginx
+class elasticsearch () {
+
+    file {'/etc/elasticsearch/elasticsearch.yml':
+        ensure => file,
+        require => Exec['wget_for_elasticsearch', 'install_elasticsearch'],
+    }
+
+    service {'elasticsearch':
+        ensure => running,
+        enable => true,
+    }
+
+    #Package['update-sun-jre'] -> Exec['wget_for_elasticsearch']
+
+}
+
 #### install mysql
 class mysql5 ($version = 'latest') {
 
@@ -141,7 +170,7 @@ class dev ($version = 'latest') {
 
     package { $devPackages:
         ensure => installed,
-        require => Exec['apt-get-update'],
+        require => Exec['apt-get-update'] ,
     }
 
 }
