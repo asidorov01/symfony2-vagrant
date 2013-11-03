@@ -16,7 +16,7 @@ exec { 'install_elasticsearch':
 exec { 'apt-get-update':
     command => 'apt-get update',
     path    => '/usr/bin/',
-    timeout => 60,
+    timeout => 600,
     tries   => 3,
 }
 
