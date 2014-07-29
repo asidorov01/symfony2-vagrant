@@ -7,11 +7,11 @@ Vagrant.configure("2") do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "phpdevbox"
+  config.vm.box = "ubuntu_14_04"
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
-  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+  config.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -57,8 +57,8 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--ioapic", "on"]
     vb.customize ["modifyvm", :id, "--vram", "16"]
     #For SSD
-    vb.customize ["storageattach", :id, "--storagectl", "SATA Controller",
-                       '--port', '0', '--nonrotational', 'on']
+#    vb.customize ["storageattach", :id, "--storagectl", "SATA Controller",
+#                       '--port', '0', '--nonrotational', 'on']
 
 
   end

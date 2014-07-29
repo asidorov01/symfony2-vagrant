@@ -1,18 +1,6 @@
 Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
 
 
-exec { 'wget_for_elasticsearch':
-    command => 'wget -O /vagrant/elasticsearch-0.90.3.deb https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.3.deb',
-    creates => "/vagrant/elasticsearch-0.90.3.deb",
-    # path => '/usr/bin/',
-}
-
-exec { 'install_elasticsearch':
-    command => 'dpkg -i /vagrant/elasticsearch-0.90.3.deb',
-    creates => "/etc/elasticsearch/elasticsearch.yml",
-    # path => '/usr/bin/',
-}
-
 exec { 'apt-get-update':
     command => 'apt-get update',
     path    => '/usr/bin/',
@@ -21,26 +9,21 @@ exec { 'apt-get-update':
 }
 
 
-#### set nodejs ppa
-class prepare {
-  class { 'apt': }
-  apt::ppa { 'ppa:chris-lea/node.js': }
-}
-include prepare
 
 
-class nodePackages {
-    package {'nodejs':
-        ensure => present,
-        require => Class['prepare'],
-    }
 
-    package {['grunt-cli', 'bower']:
-        ensure   => present,
-        provider => 'npm',
-        require  => Package['nodejs'],
-    }
-}
+# class nodePackages {
+#     package {'node':
+#         ensure => present,
+#         require => Class['prepare'],
+#     }
+
+#     package {['grunt-cli', 'bower']:
+#         ensure   => present,
+#         provider => 'npm',
+#         require  => Package['nodejs'],
+#     }
+# }
 
 class php ($version = 'latest') {
 
@@ -123,22 +106,6 @@ class nginx ($version = 'latest') {
 
 }
 
-#### install nginx
-class elasticsearch () {
-
-    file {'/etc/elasticsearch/elasticsearch.yml':
-        ensure => file,
-        require => Exec['wget_for_elasticsearch', 'install_elasticsearch'],
-    }
-
-    service {'elasticsearch':
-        ensure => running,
-        enable => true,
-    }
-
-    #Package['update-sun-jre'] -> Exec['wget_for_elasticsearch']
-
-}
 
 #### install mysql
 class mysql5 ($version = 'latest') {
@@ -166,7 +133,7 @@ class mysql5 ($version = 'latest') {
 }
 
 class dev ($version = 'latest') {
-    $devPackages = [ "curl", "git", "capistrano", "rubygems", "openjdk-7-jdk", "libaugeas-ruby", "mc", "htop", "imagemagick" ]
+    $devPackages = [ "curl", "git", "capifony", "mc", "htop", "imagemagick" ]
 
     package { $devPackages:
         ensure => installed,
@@ -186,7 +153,7 @@ class dev ($version = 'latest') {
 include mysql5
 include nginx
 include php
-include nodePackages
+# include nodePackages
 include dev
 
 
